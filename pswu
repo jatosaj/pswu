@@ -3,31 +3,28 @@ $ScriptContent = @"
 Write-Output 'Starting Windows Update...'
 Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 Write-Output 'Windows Update has finished'
-
-# Speak that it has finished
-# Load the System.Speech assembly
 Add-Type -AssemblyName System.Speech
-# Create a new instance of the SpeechSynthesizer class
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
-# Set the text to be spoken
-$text = "Windows update has has has has has finished."
-# Use the Speak method to convert text-to-speech (synchronously)
+$text = "Windows update finished."
 $synthesizer.Speak($text)
 "@
 
 $Destination = "C:\pswu-local.ps1"
 Set-Content -Path $Destination -Value $ScriptContent
 Set-ItemProperty -Path $Destination -Name Attributes -Value Hidden
-$runOnceKey = "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-$entryName = "RunPSWU"
-New-ItemProperty -ItemProperty -Path $runOnceKey -Name $entryName -Value "powershell.exe -ExecutionPolicy Bypass -File `"$Destination`""
+# $runOnceKey = "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+# $entryName = "RunPSWU"
+# New-ItemProperty -Path $runOnceKey -Name $entryName -Value "powershell.exe -ExecutionPolicy Bypass -File `"$Destination`""
+$RunOnceKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
+$Command = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$Destination`""
+New-ItemProperty -Path $RunOnceKey -Name "PSWU_RunAfterReboot" -Value $Command -PropertyType String -Force
+Write-Output "Script scheduled to run after reboot.`n"
 
 # # Check if the script is on drive C: and copy if absent
 # If (!(Test-Path $Destination)) {
 #   Copy-Item -Path $ScriptPath -Destination $Destination -Force
 #   Write-Output "Script has been successfully copied to $Destination"
 # }
-Set-ItemProperty -Path $Destination -Name Attributes -Value Hidden
 
 # Set monitor timeout to always on
 PowerCFG -Change -Monitor-Timeout-AC 0
