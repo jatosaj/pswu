@@ -39,7 +39,7 @@ if ((Test-Path $filePath1) -or (Test-Path $filePath2)) {
     Write-Output "NuGet is installed."
 } else {
     Write-Output "NuGet is not installed or is outdated. Installing..."
-    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force |Out-Null
 }
 
 # Check if PSWindowsUpdate is installed
