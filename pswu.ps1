@@ -1,5 +1,5 @@
 # Create local pswu script and set it to runonce
-$ScriptContent = @"
+$ScriptContent = @'
 Write-Output 'Starting Windows Update...'
 Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 Write-Output 'Windows Update has finished'
@@ -7,7 +7,7 @@ Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $text = "Windows update finished."
 $synthesizer.Speak($text)
-"@
+'@
 
 $Destination = "C:\pswu-local.ps1"
 Set-Content -Path $Destination -Value $ScriptContent
