@@ -9,22 +9,13 @@ $text = "Windows update finished."
 $synthesizer.Speak($text)
 '@
 
-$Destination = "C:\pswu-local.ps1"
+$Destination = "C:\pswu.ps1"
 Set-Content -Path $Destination -Value $ScriptContent
 Set-ItemProperty -Path $Destination -Name Attributes -Value Hidden
-# $runOnceKey = "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-# $entryName = "RunPSWU"
-# New-ItemProperty -Path $runOnceKey -Name $entryName -Value "powershell.exe -ExecutionPolicy Bypass -File `"$Destination`""
 $RunOnceKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
 $Command = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$Destination`""
 New-ItemProperty -Path $RunOnceKey -Name "PSWU_RunAfterReboot" -Value $Command -PropertyType String -Force
 Write-Output "Script scheduled to run after reboot.`n"
-
-# # Check if the script is on drive C: and copy if absent
-# If (!(Test-Path $Destination)) {
-#   Copy-Item -Path $ScriptPath -Destination $Destination -Force
-#   Write-Output "Script has been successfully copied to $Destination"
-# }
 
 # Set monitor timeout to always on
 PowerCFG -Change -Monitor-Timeout-AC 0
@@ -60,5 +51,6 @@ Write-Output 'If you encounter "Value does not fall within the expected range" e
 
 # Start PSWindowsUpdate
 Write-Output "Starting Windows Update..."
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll
 Write-Output "Windows Update has finished"
+Restart-Computer
