@@ -51,6 +51,6 @@ Write-Output 'If you encounter "Value does not fall within the expected range" e
 
 # Start PSWindowsUpdate
 Write-Output "Starting Windows Update..."
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 Write-Output "Windows Update has finished"
 Restart-Computer
