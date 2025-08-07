@@ -2,22 +2,29 @@
 $ScriptContent = @'
 Write-Output 'Starting Windows Update...'
 Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
-Write-Output 'Windows Update has finished'
+Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $text = "Windows update has finished."
 $synthesizer.Speak($text)
+Set-ExecutionPolicy -ExecutionPolicy Default
 '@
 
+# Define where to store script on target machine
 $Destination = "C:\pswu.ps1"
+
+# Create the file to run once
 Set-Content -Path $Destination -Value $ScriptContent
+
+# Change file to hidden
 Set-ItemProperty -Path $Destination -Name Attributes -Value Hidden
+
 $RunOnceKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
 $Command = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$Destination`""
 New-ItemProperty -Path $RunOnceKey -Name "PSWU_RunAfterReboot" -Value $Command -PropertyType String -Force
 Write-Output "Script scheduled to run after reboot.`n"
 
-# Set monitor timeout to always on
+# Set monitor timeout to always on on AC
 PowerCFG -Change -Monitor-Timeout-AC 0
 Write-Output "Screen timeout is OFF"
 
