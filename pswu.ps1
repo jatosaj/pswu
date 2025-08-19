@@ -1,7 +1,7 @@
 # Create local pswu script and set it to runonce
 $ScriptContent = @'
 Write-Output 'Starting Windows Update...'
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -AutoReboot
 Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
@@ -58,7 +58,7 @@ Write-Output 'If you encounter "Value does not fall within the expected range" e
 
 # Start PSWindowsUpdate
 Write-Output "Starting Windows Update..."
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -AutoReboot
 Write-Output "Windows Update has finished. Rebooting..."
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 10
 Restart-Computer
