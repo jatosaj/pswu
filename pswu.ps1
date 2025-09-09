@@ -5,7 +5,7 @@ Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -Aut
 Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
-$text = "Windows is ready and waiting Callum"
+$text = "Windows is ready and waiting for you Callum"
 $synthesizer.Speak($text)
 Set-ExecutionPolicy -ExecutionPolicy Default
 '@
@@ -60,5 +60,5 @@ Write-Output 'If you encounter "Value does not fall within the expected range" e
 Write-Output "Starting Windows Update..."
 Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -AutoReboot
 Write-Output "Windows Update has finished. Rebooting..."
-Start-Sleep -Seconds 10
+# Start-Sleep -Seconds 10
 Restart-Computer
