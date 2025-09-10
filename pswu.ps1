@@ -28,7 +28,7 @@ Write-Output "Script scheduled to run after reboot.`n"
 PowerCFG -Change -Monitor-Timeout-AC 0
 Write-Output "Screen timeout is OFF"
 
-<# # Check if the NuGet is installed
+# Check if the NuGet is installed
 # Define the file paths
 $filePath1 = "C:\Program Files\PackageManagement\ProviderAssemblies\nuget"
 $filePath2 = "C:\Users\User\AppData\Local\PackageManagement\ProviderAssemblies\nuget"
@@ -36,9 +36,9 @@ $filePath2 = "C:\Users\User\AppData\Local\PackageManagement\ProviderAssemblies\n
 if ((Test-Path $filePath1) -or (Test-Path $filePath2)) {
     Write-Output "NuGet is installed."
 } else {
-    Write-Output "NuGet is not installed or is outdated. Installing..." #>
+    Write-Output "NuGet is not installed or is outdated. Installing..."
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force |Out-Null
-
+}
 
 # Check if PSWindowsUpdate is installed
 $filePath3 = "C:\Program Files\WindowsPowerShell\Modules\PSWindowsUpdate\"
