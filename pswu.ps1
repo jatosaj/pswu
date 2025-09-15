@@ -5,7 +5,7 @@ Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -Aut
 Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
-$text = "Windows is ready and waiting for you Callum"
+$text = "Windows Update is ready."
 $synthesizer.Speak($text)
 Set-ExecutionPolicy -ExecutionPolicy Default
 '@
