@@ -31,12 +31,14 @@ if [[ "${#}" -gt 1 ]]
 # Loop trough the drives
 while [[ "${1}" -gt 0 ]]
   do
-
-# Run smartmon test and print results
-sudo smartctl -a "/dev/sg${1}" | tail -n +3 | enscript -B -f Courier9/10
-# Format drive to 512b
-
-echo "Parameter: ${1}"
-set -- $(($1-1))
+    # Shift down nuber of drives
+    NO_DRIVES=$((NO_DRIVES - 1))
+    # Format drive to 512b
+    sg_format --format --size=512 "/dev/sg${NO_DRIVES}"
+    # Run smartmon test and print results
+    sudo smartctl -a "/dev/sg${NO_DRIVES}" | tail -n +3 | enscript -B -f Courier9/10
+    echo "Printing report for drive: sg${NO_DRIVES}"
+    # Shift down parameter
+    set -- $(($1-1))
 done
 
