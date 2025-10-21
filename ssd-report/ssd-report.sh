@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Define number of drives
+NO_DRIVES=${1}
+
 # Make sure the script is being executed with super user privilages
 if [[ "${UID}" -ne 0 ]]
   then
@@ -11,7 +14,8 @@ if [[ "${UID}" -ne 0 ]]
 if [[ "${#}" -lt 1 ]]
   then
     echo "Provide the number of drives to format"
-    echo "Usage: ${0} NUMBER_OF_DRIVESecho"
+    echo -en '\n'
+    echo "Usage: ${0} NUMBER_OF_DRIVES"
     exit 1
   fi
 
