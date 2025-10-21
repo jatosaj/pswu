@@ -33,6 +33,8 @@ while [[ "${1}" -gt 0 ]]
   do
     # Shift down nuber of drives
     NO_DRIVES=$((NO_DRIVES - 1))
+    # Run short captive smart test
+    smartctl -C -t short "/dev/sg${NO_DRIVES}"
     # Format drive to 512b
     sg_format --format --size=512 "/dev/sg${NO_DRIVES}"
     # Run smartmon test and print results
