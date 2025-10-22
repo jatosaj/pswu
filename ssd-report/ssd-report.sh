@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define number of drives
-NO_DRIVES=${1}
+1=${1}
 
 # Make sure the script is being executed with super user privilages
 if [[ "${UID}" -ne 0 ]]
@@ -31,16 +31,15 @@ if [[ "${#}" -gt 1 ]]
 # Loop trough the drives
 while [[ "${1}" -gt 0 ]]
   do
-    # Shift down nuber of drives
-    NO_DRIVES=$((NO_DRIVES - 1))
-    # Run short captive smart test
-    smartctl -C -t short "/dev/sg${NO_DRIVES}"
-    # Format drive to 512b
-    sg_format --format --size=512 "/dev/sg${NO_DRIVES}"
-    # Run smartmon test and print results
-    sudo smartctl -a "/dev/sg${NO_DRIVES}" | tail -n +3 | enscript -B -f Courier9/10
-    echo "Printing report for drive: sg${NO_DRIVES}"
     # Shift down parameter
     set -- $(($1-1))
-done
+    # Run short captive smart test
+    smartctl -C -t short "/dev/sg${1}"
+    # Format drive to 512b
+    sg_format --format --size=512 "/dev/sg${1}"
+    # Read S.M.A.R.T values, skip two first lines and send the output to printer wuth font Courier 9px wide and 10px high
+    sudo smartctl -a "/dev/sg${1}" | tail -n +3 | enscript -B -f Courier9/10
+    echo "Printing report for drive: sg${1}"
 
+done
+exit 0
