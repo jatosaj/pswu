@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define number of drives
-#1=${1}
+NO_OF_REPORTS=${1}
 
 # Make sure the script is being executed with super user privilages
 if [[ "${UID}" -ne 0 ]]
@@ -32,7 +32,7 @@ if [[ "${#}" -gt 1 ]]
 while [[ "${1}" -gt 0 ]]
   do
     # Run short captive smart test
-    smartctl -C -t short "/dev/sg${1}"
+    smartctl -C -t short "/dev/sg${1}" > /dev/null
     # Read S.M.A.R.T values, skip two first lines and send the output to printer with font Courier 9px wide and 10px high and print it using lpr duplex mode
     sudo smartctl -a "/dev/sg${1}" | tail -n +3 | enscript -B -f Courier9/10 -p- | lpr -o sides=two-sided-long-edge
     echo "Printing report for drive: sg${1}"
@@ -40,5 +40,5 @@ while [[ "${1}" -gt 0 ]]
     set -- $(($1-1))
 done
 
-echo "${1} report has been printed"
+echo "$NO_OF_REPORTS reports has been printed"
 exit 0
