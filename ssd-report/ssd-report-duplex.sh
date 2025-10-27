@@ -31,13 +31,16 @@ if [[ "${#}" -gt 1 ]]
 # Loop trough the drives
 while [[ "${1}" -gt 0 ]]
   do
+    echo "Starting short captive test"
     # Run short captive smart test
     smartctl -C -t short "/dev/sg${1}" > /dev/null
     # Read S.M.A.R.T values, skip two first lines and send the output to printer with font Courier 9px wide and 10px high and print it using lpr duplex mode
-    sudo smartctl -a "/dev/sg${1}" | tail -n +3 | enscript -B -f Courier9/10 -p- | lpr -o sides=two-sided-long-edge
+    smartctl -a "/dev/sg${1}" | tail -n +3 | enscript -B -f Courier9/10 -p- | lpr -o sides=two-sided-long-edge
     echo "Printing report for drive: sg${1}"
     # Shift down parameter
     set -- $(($1-1))
+    # Put the drive to sleep mode
+     hdparm -Y /dev/sg0
 done
 
 echo "$NO_OF_REPORTS reports has been printed"
