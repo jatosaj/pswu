@@ -9,7 +9,7 @@
 # This script assumes:
 # 1. The installer app is located at "/Applications/Install macOS [Version Name].app"
 # 2. The target volume is mounted at "/Volumes/Install macOS [Version Name]"
-declare -a MACOS_VERSIONS=("Tahoe" "Sequoia" "Sonoma")
+declare -a MACOS_VERSIONS=("Tahoe" "Sequoia" "Sonoma" "Ventura")
 
 # --- Script Logic ---
 
