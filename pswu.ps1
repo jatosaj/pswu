@@ -8,13 +8,14 @@ $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $text = "Windows Update is ready."
 $synthesizer.Speak($text)
 Set-ExecutionPolicy -ExecutionPolicy Default
+Start-Sleep -Seconds 10
 '@
 
 # Define where to store script on target machine
 $Destination = "C:\pswu.ps1"
 
 # Create the file to run once
-#Set-Content -Path $Destination -Value $ScriptContent
+Set-Content -Path $Destination -Value $ScriptContent
 
 # Change file to hidden
 Set-ItemProperty -Path $Destination -Name Attributes -Value Hidden
@@ -58,7 +59,7 @@ Write-Output 'If you encounter "Value does not fall within the expected range" e
 
 # Start PSWindowsUpdate
 Write-Output "Starting Windows Update..."
-#Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 Write-Output "Windows Update has finished. Rebooting..."
 Start-Sleep -Seconds 10
 Restart-Computer
