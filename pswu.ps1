@@ -7,7 +7,7 @@ Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $text = "Happy Friday!"
 $synthesizer.Speak($text)
-Set-ExecutionPolicy -ExecutionPolicy Default
+#Set-ExecutionPolicy -ExecutionPolicy Default
 Start-Sleep -Seconds 10
 '@
 
