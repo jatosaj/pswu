@@ -14,7 +14,7 @@ Start-Sleep -Seconds 10
 '@
 
 #Install polish language
-Install-Language -Language pl-PL
+#Install-Language -Language pl-PL
 
 # Define where to store script on target machine
 $Destination = "C:\pswu.ps1"
