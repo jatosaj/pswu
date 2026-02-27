@@ -4,17 +4,12 @@ Write-Output 'Starting Windows Update...'
 Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -AutoReboot
 Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
-$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer
-$polishVoice = $synth.GetInstalledVoices() | Where-Object { $_.VoiceInfo.Culture.Name -eq "pl-PL" } | Select-Object -First 1
-$synth.SelectVoice($polishVoice.VoiceInfo.Name)
-$text = "Aktualizacja gotowa"
-$synth.Speak($text)
+$synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$text = "Happy Friday!"
+$synthesizer.Speak($text)
 Set-ExecutionPolicy -ExecutionPolicy Default
 Start-Sleep -Seconds 10
 '@
-
-#Install polish language
-#Install-Language -Language pl-PL
 
 # Define where to store script on target machine
 $Destination = "C:\pswu.ps1"
