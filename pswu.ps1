@@ -7,8 +7,9 @@ Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $text = "Living in a dream!"
 $synthesizer.Speak($text)
+store install 9WZDNCRFJ4MV
 #Set-ExecutionPolicy -ExecutionPolicy Default
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 320
 '@
 
 # Define where to store script on target machine
