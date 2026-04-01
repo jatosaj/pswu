@@ -9,7 +9,8 @@ $text = "Living in a dream!"
 $synthesizer.Speak($text)
 store install 9WZDNCRFJ4MV
 #Set-ExecutionPolicy -ExecutionPolicy Default
-Start-Sleep -Seconds 320
+#Start-Sleep -Seconds 320
+Restart-Computer
 '@
 
 # Define where to store script on target machine
