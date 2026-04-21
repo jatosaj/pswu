@@ -5,7 +5,7 @@ Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -Aut
 Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
-$text = "Windows update has been updated. Hopefully!"
+$text = "Windows update has finished!"
 $synthesizer.Speak($text)
 #Set-ExecutionPolicy -ExecutionPolicy Default
 Start-Sleep -Seconds 10
