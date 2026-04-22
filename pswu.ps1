@@ -67,7 +67,7 @@ New-ItemProperty -Path $RunOnceKey -Name "PSWU_RunAfterReboot" -Value $Command -
 
 # Prerequisites & First Run
 PowerCFG -Change -Monitor-Timeout-AC 0
-store install 9WZDNCRFJ4MV
+Store Install 9WZDNCRFJ4MV # Installs Vantage
 
 if (!(Get-Module -ListAvailable PSWindowsUpdate)) {
     Write-Output "Installing PSWindowsUpdate module..."
