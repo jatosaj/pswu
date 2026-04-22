@@ -2,7 +2,7 @@
 $TotalReboots = 1.            # Set the ammount of the reboots required.
 $DeviceInstanceID = "foo-bar" # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Device instance path from the dropdown.
 $DriverINF = "oem93.inf"        # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown.
-$Destination = "%ProgramFiles%\PowerShell"
+$Destination = "$env:ProgramFiles\PowerShell\pswu.ps1"
 
 # --- CREATE THE PERSISTENT SCRIPT ---
 $ScriptContent = @"
