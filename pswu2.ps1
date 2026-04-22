@@ -1,5 +1,5 @@
 # --- CONFIGURATION ---
-$TotalReboots = 3.            # Set the ammount of the reboots required.
+$TotalReboots = 1.            # Set the ammount of the reboots required.
 $DeviceInstanceID = "foo-bar" # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Device instance path from the dropdown.
 $DriverINF = "foo-bar"        # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown.
 $Destination = "%ProgramFiles%\PowerShell"
@@ -77,4 +77,5 @@ if (!(Get-Module -ListAvailable PSWindowsUpdate)) {
 Import-Module PSWindowsUpdate
 Write-Output "Starting first cycle..."
 Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+Start-Sleep -Seconds 5
 Restart-Computer -Force
