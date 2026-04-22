@@ -1,6 +1,6 @@
 # --- CONFIGURATION ---
 $TotalReboots = 1.            # Set the ammount of the reboots required.
-$DeviceInstanceID = "foo-bar" # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Device instance path from the dropdown.
+$DeviceInstanceID = "UEFI\RES_{2F45F824-5964-4CF7-A20E-6B2A1E3E69F0}\0" # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Device instance path from the dropdown.
 $DriverINF = "oem93.inf"        # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown.
 $Destination = "$env:ProgramData\pswu.ps1"
 
