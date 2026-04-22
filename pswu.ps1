@@ -1,7 +1,7 @@
 # --- CONFIGURATION ---
 $TotalReboots = 1.            # Set the ammount of the reboots required.
 $DeviceInstanceID = "foo-bar" # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Device instance path from the dropdown.
-$DriverINF = "foo-bar"        # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown.
+$DriverINF = "oem93.inf"        # Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown.
 $Destination = "%ProgramFiles%\PowerShell"
 
 # --- CREATE THE PERSISTENT SCRIPT ---
@@ -67,6 +67,7 @@ New-ItemProperty -Path $RunOnceKey -Name "PSWU_RunAfterReboot" -Value $Command -
 
 # Prerequisites & First Run
 PowerCFG -Change -Monitor-Timeout-AC 0
+store install 9WZDNCRFJ4MV
 
 if (!(Get-Module -ListAvailable PSWindowsUpdate)) {
     Write-Output "Installing PSWindowsUpdate module..."
