@@ -5,7 +5,7 @@ $DeviceInstanceID = "foo-bar"              # The unique Instance ID of the devic
 $DriverINF = "foo-bar"                     # The specific INF file name of the driver to be deleted. Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown. 
 $Destination = "$env:ProgramData\pswu.ps1" # The location where the persistent script will be saved
 $LogPath = "$env:ProgramData\pswu_log.txt" # The location where the script will write its log file
-$StoreInstall = ""                         # The additional software to be installed using the store command. Use the software ID i.e 9WZDNCRFJ4MV
+$StoreInstall = "foo-bar"                         # The additional software to be installed using the store command. Use the software ID i.e 9WZDNCRFJ4MV
 
 # --- SCRIPT CONTENT TO BE RUN ON EVERY REBOOT ---
 
