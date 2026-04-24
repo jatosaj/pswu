@@ -1,11 +1,12 @@
 # --- CONFIGURATION VARIABLES ---
+# This is pswu configured as deafult for Lenovo. It installs Lenovo Vantage
 
 $TotalReboots = 1                          # Total number of times the script should reboot the machine
-$DeviceInstanceID = "foo-bar"              # The unique Instance ID of the device to be removed. Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Device instance path from the dropdown.
-$DriverINF = "foo-bar"                     # The specific INF file name of the driver to be deleted. Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown. 
+#$DeviceInstanceID = "PLACE_HOLDER"         # The unique Instance ID of the device to be removed. Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Device instance path from the dropdown.
+#$DriverINF = "PLACE_HOLDER"                # The specific INF file name of the driver to be deleted. Where to find it: In Device Manager, right-click the device > Properties > Details tab > Select Inf name from the dropdown. 
 $Destination = "$env:ProgramData\pswu.ps1" # The location where the persistent script will be saved
 $LogPath = "$env:ProgramData\pswu_log.txt" # The location where the script will write its log file
-$StoreInstall = "foo-bar"                  # The additional software to be installed using the store command. Use the software ID i.e 9WZDNCRFJ4MV
+$StoreInstall = "9WZDNCRFJ4MV"             # The additional software to be installed using the store command. Use the software ID i.e 9WZDNCRFJ4MV
 
 # --- SCRIPT CONTENT TO BE RUN ON EVERY REBOOT ---
 
