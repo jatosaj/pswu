@@ -113,6 +113,7 @@ New-ItemProperty -Path $RunOnceKey -Name "PSWU_RunAfterReboot" -Value $Command -
 PowerCFG -Change -Monitor-Timeout-AC 0
 
 # Execute the software install 
+Write-Output "Installing Software ID: $StoreInstall"
 Store Install $StoreInstall
 
 # Check if PSWindowsUpdate is installed; install if missing
