@@ -1,19 +1,29 @@
-Start-Sleep -Seconds 10
 # --- CONFIGURATION VARIABLES ---
 # This is pswu configured as default for Lenovo. It installs Lenovo Vantage
 
-$TotalReboots = 1                          # Total number of times the script should reboot the machine
-$DeviceInstanceID = ""                     # Fill this in later, but leave it uncommented!
-$DriverINF = ""                            # Fill this in later, but leave it uncommented!
-$Destination = "$env:ProgramData\pswu.ps1" # The location where the persistent script will be saved
-$LogPath = "$env:ProgramData\pswu_log.txt" # The location where the script will write its log file
-$StoreInstall = "9WZDNCRFJ4MV"             # The additional software ID
+$TotalReboots = 1                          # Set to 2 if you want an extra update pass before cleanup
+$DeviceInstanceID = ""                     # Add your ID here if needed
+$DriverINF = "oem93.inf"                   # The driver to be removed on the final pass
+$Destination = "$env:ProgramData\pswu.ps1" # The location for the persistent script
+$LogPath = "$env:ProgramData\pswu_log.txt" # Detailed log file
+$StoreInstall = "9WZDNCRFJ4MV"             # Lenovo Vantage ID
 
-# --- SCRIPT CONTENT TO BE RUN ON EVERY REBOOT ---
+# --- LOGGING FUNCTION ---
+function Write-Log {
+    param($Message)
+    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    "[$Timestamp] $Message" | Out-File -FilePath $LogPath -Append
+    Write-Output $Message
+}
+
+# Initial delay to ensure the network and services are actually ready
+Write-Log "Initializing. Waiting 20s for OOBE background services..."
+Start-Sleep -Seconds 20
+
+# --- CREATE THE PERSISTENT SCRIPT CONTENT ---
 $ScriptContent = @"
 `$RegPath = 'HKLM:\SOFTWARE\PSWU'
 `$LogFile = '$LogPath'
-`$CurrentCount = 0
 
 function Write-Log {
     param(`$Message)
@@ -27,89 +37,86 @@ try {
     `$CurrentCount = 1
 }
 
-Write-Log "Starting Cycle: `$CurrentCount"
+Write-Log "Cycle Started. Remaining: `$CurrentCount"
 
 if (`$CurrentCount -gt 1) {
-    # Still in loop: Decrement and Re-arm
     `$NewCount = `$CurrentCount - 1
     Set-ItemProperty -Path `$RegPath -Name 'RebootCount' -Value `$NewCount
-    
     `$RunOnceKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
     `$Command = 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$Destination"'
     New-ItemProperty -Path `$RunOnceKey -Name 'PSWU_RunAfterReboot' -Value `$Command -PropertyType String -Force
 } else {
-    # Final pass: Cleanup
-    Write-Log "Final pass detected. Cleaning up device/drivers."
-    
+    Write-Log "Final cycle cleanup. Removing Drivers/Devices."
     if ("$DeviceInstanceID") { pnputil /remove-device "$DeviceInstanceID" | Out-Null }
     if ("$DriverINF") { pnputil /delete-driver $DriverINF /uninstall /force | Out-Null }
-    
     Remove-Item -Path `$RegPath -Recurse -ErrorAction SilentlyContinue
 }
 
 try {
     Import-Module PSWindowsUpdate
-    Write-Log "Running Install-WindowsUpdate..."
+    Write-Log "Running Windows Updates..."
     Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot -ErrorAction Stop
 } catch {
     `$ErrMsg = `$_.Exception.Message
-    Write-Log "ERROR: `$ErrMsg"
+    Write-Log "UPDATE ERROR: `$ErrMsg"
     if (`$ErrMsg -match "expected range") {
-        Write-Log "Known WU error detected. Resetting components."
+        Write-Log "Triggering WU Self-Healing (Reset-WUComponents)..."
         Reset-WUComponents -Confirm:`$false
     }
 }
 
 if (`$CurrentCount -gt 1) {
-    Write-Log "Rebooting for next cycle."
+    Write-Log "Looping: Rebooting computer."
     Start-Sleep -Seconds 5
     Restart-Computer -Force
 } else {
-    Write-Log "Sequence Complete."
+    Write-Log "Process Complete."
     Add-Type -AssemblyName System.Speech
-    (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Sequence finished and logged')
+    (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Deployment Finished')
 }
 "@
 
-# --- INITIAL SETUP & EXECUTION ---
-# Create the script and hide it
+# --- INITIAL SETUP ---
+Write-Log "Saving persistent script to $Destination"
 Set-Content -Path $Destination -Value $ScriptContent
 Set-ItemProperty -Path $Destination -Name Attributes -Value Hidden
 
-# Initialize log
-"$(Get-Date): Script Initialized" | Out-File -FilePath $LogPath
-
-# Setup registry counter
+Write-Log "Configuring Registry tracking..."
 $RegPath = "HKLM:\SOFTWARE\PSWU"
 if (!(Test-Path $RegPath)) { New-Item -Path $RegPath -Force | Out-Null }
 Set-ItemProperty -Path $RegPath -Name "RebootCount" -Value $TotalReboots
 
-# Set RunOnce for the first reboot
+# Initial RunOnce Setup
 $RunOnceKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
 $Command = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$Destination`""
 New-ItemProperty -Path $RunOnceKey -Name "PSWU_RunAfterReboot" -Value $Command -PropertyType String -Force
 
-# Set monitor timeout
+Write-Log "Disabling monitor timeout..."
 PowerCFG -Change -Monitor-Timeout-AC 0
 
-# 1. RUN STORE INSTALL FIRST
-Write-Output "Step 1: Installing Software ID: $StoreInstall..."
-Store Install $StoreInstall
+# --- SOFTWARE INSTALLATION ---
+Write-Log "Starting Store Install: $StoreInstall"
+try {
+    Store Install $StoreInstall
+    Write-Log "Store command issued."
+} catch {
+    Write-Log "Store command failed to execute."
+}
 
-# 2. SETUP WINDOWS UPDATE MODULE
+# --- MODULE PREREQUISITES ---
 if (!(Get-Module -ListAvailable PSWindowsUpdate)) {
-    Write-Output "Step 2: Installing PSWindowsUpdate module..."
+    Write-Log "Installing NuGet provider..."
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
+    Write-Log "Installing PSWindowsUpdate Module..."
     Install-Module PSWindowsUpdate -Force -SkipPublisherCheck
 }
 
-# 3. RUN INITIAL UPDATES
+# --- START UPDATES ---
+Write-Log "Importing Module and starting first update pass..."
 Import-Module PSWindowsUpdate
-Write-Output "Step 3: Initial updates starting. Check $LogPath for details."
-# -AutoReboot will handle the restart if updates are installed.
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot 
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 
-# Final safety check: If no updates were found, we manually reboot to start the loop logic.
-Write-Output "Initial tasks complete. Proceeding to first reboot..."
-#Start-Sleep -Seconds 5
-#Restart-Computer -Force
+# Manual reboot fallback if updates found nothing
+Write-Log "First pass finished. Initializing first reboot."
+Start-Sleep -Seconds 5
+Restart-Computer -Force
