@@ -110,5 +110,5 @@ Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 
 # Final safety check: If no updates were found, we manually reboot to start the loop logic.
 Write-Output "Initial tasks complete. Proceeding to first reboot..."
-Start-Sleep -Seconds 5
-Restart-Computer -Force
+#Start-Sleep -Seconds 5
+#Restart-Computer -Force
