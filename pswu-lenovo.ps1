@@ -1,3 +1,4 @@
+Start-Sleep -Seconds 10
 # --- CONFIGURATION VARIABLES ---
 # This is pswu configured as default for Lenovo. It installs Lenovo Vantage
 
