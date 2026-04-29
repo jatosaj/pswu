@@ -6,6 +6,11 @@ $Destination = "$env:ProgramData\pswu.ps1"
 $LogPath = "$env:ProgramData\pswu_log.txt" 
 $StoreInstall = "9WZDNCRFJ4MV"             
 
+# --- THE FIX: PRE-FIND THE PATH ---
+# We find the real path now so the background script doesn't fail later.
+$StorePath = (Get-Command "store" -ErrorAction SilentlyContinue).Source
+if (-not $StorePath) { $StorePath = "store" } # Fallback just in case
+
 # --- INITIAL LOGGING ---
 function Write-Log {
     param($Message)
@@ -13,9 +18,9 @@ function Write-Log {
     "[$Timestamp] $Message" | Out-File -FilePath $LogPath -Append
 }
 
-Write-Log "Initial Setup Started."
+Write-Log "Initial Setup Started. Store path found: $StorePath"
 
-# --- PERSISTENT SCRIPT (Runs on reboots) ---
+# --- PERSISTENT SCRIPT ---
 $ScriptContent = @"
 `$RegPath = 'HKLM:\SOFTWARE\PSWU'
 `$LogFile = '$LogPath'
@@ -35,27 +40,23 @@ try {
 Write-Log "Cycle Started. Remaining: `$CurrentCount"
 
 if (`$CurrentCount -gt 1) {
-    # --- INTERMEDIATE PASS LOGIC ---
     `$NewCount = `$CurrentCount - 1
     Set-ItemProperty -Path `$RegPath -Name 'RebootCount' -Value `$NewCount
     `$RunOnceKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
     `$Command = 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$Destination"'
     New-ItemProperty -Path `$RunOnceKey -Name 'PSWU_RunAfterReboot' -Value `$Command -PropertyType String -Force
 } else {
-    # --- FINAL PASS LOGIC ---
     Write-Log "Final pass detected. Running Store Install and Cleanup."
 
-    # Direct command as requested
-    store install $StoreInstall
-
-    # Cleanup Drivers/Devices
+    # Using the pre-resolved path to avoid "Not Recognized" errors
+    & "$StorepowerPath" install $StoreInstall
+echo $
     if ("$DeviceInstanceID") { pnputil /remove-device "$DeviceInstanceID" | Out-Null }
     if ("$DriverINF") { pnputil /delete-driver $DriverINF /uninstall /force | Out-Null }
     
     Remove-Item -Path `$RegPath -Recurse -ErrorAction SilentlyContinue
 }
 
-# --- WINDOWS UPDATE BLOCK ---
 try {
     Import-Module PSWindowsUpdate
     Write-Log "Checking for updates..."
@@ -101,5 +102,5 @@ if (!(Get-Module -ListAvailable PSWindowsUpdate)) {
 }
 
 Write-Log "Initial pass complete. Triggering first reboot."
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 120
 Restart-Computer -Force
