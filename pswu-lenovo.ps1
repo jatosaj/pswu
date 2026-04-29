@@ -1,9 +1,9 @@
 # --- CONFIGURATION ---
 $TotalReboots = 1                          
 $DeviceInstanceID = ""                     
-$DriverINF = "oem93.inf"                   
-$Destination = "$env:ProgramData\pswu.ps1" 
-$LogPath = "$env:ProgramData\pswu_log.txt" 
+$DriverINF = ""                   
+$Destination = "$env:ProgramData\PSWU\pswu.ps1" 
+$LogPath = "$env:ProgramData\PSWU\pswu_log.txt" 
 $StoreInstall = "9WZDNCRFJ4MV"             
 
 # --- INITIAL LOGGING FUNCTION ---
