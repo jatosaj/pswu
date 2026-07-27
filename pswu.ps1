@@ -1,7 +1,30 @@
+# Ensure Windows Update result tables format at a consistent width regardless of
+# how this script is launched (interactive, -File from a drive, or IWR | IEX from web).
+function Set-WideConsole {
+    param([int]$Width = 140)
+    try {
+        $raw = $Host.UI.RawUI
+        $buf = $raw.BufferSize
+        if ($buf.Width -lt $Width) { $buf.Width = $Width; $raw.BufferSize = $buf }
+    } catch { }   # no real console (headless) - ignore
+}
+Set-WideConsole
+
 # Create local pswu script and set it to runonce
 $ScriptContent = @'
+# Keep the update table aligned when this copy runs from RunOnce after reboot.
+function Set-WideConsole {
+    param([int]$Width = 140)
+    try {
+        $raw = $Host.UI.RawUI
+        $buf = $raw.BufferSize
+        if ($buf.Width -lt $Width) { $buf.Width = $Width; $raw.BufferSize = $buf }
+    } catch { }
+}
+Set-WideConsole
+
 Write-Output 'Starting Windows Update...'
-Install-WindowsUpdate -MicrosoftUpdate -NotKBArticleID KB5063878 -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
@@ -55,7 +78,7 @@ if (Test-Path $filePath3) {
 Import-Module PSWindowsUpdate
 Write-Output "PSWindowsUpdate module imported"
 
-Write-Output 'If you encounter "Value does not fall within the expected range" error - run Reset-WUComponents and restart the script' 
+Write-Output 'If you encounter "Value does not fall within the expected range" error - run Reset-WUComponents and restart the script'
 
 # Start PSWindowsUpdate
 Write-Output "Starting Windows Update..."
