@@ -10,6 +10,9 @@ function Set-WideConsole {
 }
 Set-WideConsole
 
+# Log this entire run to a file (best-effort; a reboot may truncate the tail).
+try { Start-Transcript -Path 'C:\pswu.log' -Append -Force | Out-Null } catch { }
+
 # Create local pswu script and set it to runonce
 $ScriptContent = @'
 # Keep the update table aligned when this copy runs from RunOnce after reboot.
@@ -23,8 +26,13 @@ function Set-WideConsole {
 }
 Set-WideConsole
 
+try { Start-Transcript -Path 'C:\pswu-runonce.log' -Append -Force | Out-Null } catch { }
+
 Write-Output 'Starting Windows Update...'
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot |
+    Format-Table X, ComputerName, Status, KB, Size, Title -AutoSize |
+    Out-String -Width 4096 |
+    Write-Output
 Write-Output 'Windows Update has finished.'
 Add-Type -AssemblyName System.Speech
 $synthesizer = New-Object System.Speech.Synthesis.SpeechSynthesizer
@@ -82,7 +90,10 @@ Write-Output 'If you encounter "Value does not fall within the expected range" e
 
 # Start PSWindowsUpdate
 Write-Output "Starting Windows Update..."
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot |
+    Format-Table X, ComputerName, Status, KB, Size, Title -AutoSize |
+    Out-String -Width 4096 |
+    Write-Output
 Write-Output "Windows Update has finished. Rebooting..."
 Start-Sleep -Seconds 10
 Restart-Computer
